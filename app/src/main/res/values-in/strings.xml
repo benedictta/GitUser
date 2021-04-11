@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GitUser</string>
+    <string name="search">Cari</string>
+    <string name="search_hint">Cari Username</string>
+    <string name="company">Perusahaan</string>
+    <string name="location">lokasi</string>
+    <string name="tab_text1">Repositori</string>
+    <string name="tab_text2">Mengikuti</string>
+    <string name="tab_text3">Pengikut</string>
+    <string name="repository_warning">This user does not ave any repository</string>
+    <string name="followers_warning">This user has no followers</string>
+    <string name="following_warning">This user hasn\'t followed anyone</string>
+    <string name="favorite_user">Pengguna Favorit</string>
+    <string name="settings">Pengaturan</string>
+</resources>
