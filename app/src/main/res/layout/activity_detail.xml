@@ -22,6 +22,17 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@color/light_gray" />
 
+        <CheckBox
+            android:id="@+id/like_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/favorite_button_selector"
+            android:button="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/txt_name"
             android:layout_width="wrap_content"

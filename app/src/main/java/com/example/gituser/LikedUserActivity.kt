@@ -8,8 +8,9 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gituser.adapter.UserAdapter
+import com.example.gituser.adapter.LikedUserAdapter
 import com.example.gituser.database.DatabaseContract
+import com.example.gituser.database.DatabaseContract.UserColumns.Companion.CONTENT_URI
 import com.example.gituser.database.MappingHelper
 import com.example.gituser.database.UserHelper
 import com.example.gituser.model.User
@@ -34,18 +35,18 @@ class LikedUserActivity : AppCompatActivity() {
     }
 
     private fun showRecyclerList() {
-        val userAdapter = UserAdapter(likedUserList)
+        val userAdapter = LikedUserAdapter(likedUserList)
 
         userAdapter.notifyDataSetChanged()
         rvUsers.adapter = userAdapter
 
-        userAdapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback {
+        userAdapter.setOnItemClickCallback(object : LikedUserAdapter.OnItemClickCallback {
             override fun onItemClicked(data: User) {
                 showSelectedUser(data)
             }
         })
 
-        userAdapter.setOnLikeButtonClickCallback(object : UserAdapter.OnLikeButtonClickCallback{
+        userAdapter.setOnLikeButtonClickCallback(object : LikedUserAdapter.OnLikeButtonClickCallback{
             override fun onLikeButtonClicked(data: User) {
                 LikeButtonAction(data)
             }
@@ -55,7 +56,7 @@ class LikedUserActivity : AppCompatActivity() {
     private fun getLikedUsers(): ArrayList<User>{
         val userHelper = UserHelper.getInstance(applicationContext)
         userHelper.open()
-        val cursor = userHelper.queryAll()
+        val cursor = contentResolver.query(CONTENT_URI, null, null, null, null)
         val LikedUserList = MappingHelper.mapCursorToArrayList(cursor)
         userHelper.close()
         return LikedUserList
@@ -91,19 +92,7 @@ class LikedUserActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        when(listChanged){
-            false -> onBackPressed()
-            true -> super.onSupportNavigateUp()
-        }
+        onBackPressed()
         return true
-    }
-
-    override fun onBackPressed() {
-        when(listChanged){
-            false -> super.onBackPressed()
-            true -> {
-                super.onSupportNavigateUp()
-            }
-        }
     }
 }

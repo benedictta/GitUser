@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.example.gituser.database.DatabaseContract.UserColumns.Companion.TABLE_NAME
+import com.example.gituser.database.DatabaseContract.UserColumns.Companion.USERNAME
 
 class UserHelper(context: Context) {
 
@@ -44,6 +45,18 @@ class UserHelper(context: Context) {
                 null,
                 null,
                 "USERNAME ASC")
+    }
+
+    fun queryByUser(username: String): Cursor {
+        return database.query(
+            DATABASE_TABLE,
+            null,
+            "$USERNAME = ?",
+            arrayOf(username),
+            null,
+            null,
+            null,
+            null)
     }
 
     fun checkIfExist(username: String): Boolean{

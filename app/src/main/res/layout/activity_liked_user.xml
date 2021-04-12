@@ -30,6 +30,6 @@
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="3dp"
         tools:layout_editor_absoluteY="3dp"
-        tools:listitem="@layout/item_list_user" />
+        tools:listitem="@layout/item_list_liked_user" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

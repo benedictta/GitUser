@@ -1,8 +1,10 @@
 package com.example.gituser
 
+import android.content.ContentValues
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -12,6 +14,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.gituser.adapter.SectionsPagerAdapter
+import com.example.gituser.database.DatabaseContract
+import com.example.gituser.database.UserHelper
 import com.example.gituser.model.User
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -22,7 +26,7 @@ import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), View.OnClickListener {
     companion object{
         const val EXTRA_USER = "extra_user"
         @StringRes
@@ -37,15 +41,18 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var userDataLayout: ConstraintLayout
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
+    private lateinit var likeButton: CheckBox
+    private lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val user: User = intent.getParcelableExtra(EXTRA_USER) as User
-
+        likeButton = findViewById(R.id.like_button)
+        user = intent.getParcelableExtra(EXTRA_USER) as User
         showUserData(user)
         supportActionBar?.elevation = 0f
+        likeButton.setOnClickListener(this)
 
     }
     fun loading(status: Boolean, progressDialog: AlertDialog){
@@ -69,6 +76,53 @@ class DetailActivity : AppCompatActivity() {
             },1500)
         }
     }
+
+    private fun isFavoriteUser(username: String): Boolean{
+        val userHelper = UserHelper.getInstance(applicationContext)
+        userHelper.open()
+        val isFavorite = userHelper.checkIfExist(username)
+        userHelper.close()
+        return isFavorite
+    }
+
+    private fun LikeButtonAction(user: User){
+        val isChecked = user.isFavorite
+        if(isChecked){
+            removeUserFromFavorite(user)
+            user.isFavorite = false
+        }
+        else if(!isChecked){
+            addUserToFavorite(user)
+            user.isFavorite = true
+        }
+    }
+
+    private fun addUserToFavorite(user: User){
+        val userHelper = UserHelper.getInstance(applicationContext)
+        userHelper.open()
+        val values = ContentValues()
+        values.put(DatabaseContract.UserColumns.USERNAME, user.username)
+        values.put(DatabaseContract.UserColumns.AVATAR_URL, user.avatar)
+        val result = userHelper.insert(values)
+        if (result > 0) {
+            Toast.makeText(this,"User Added to Favorite",Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Failed to Add User to Favorite", Toast.LENGTH_SHORT).show()
+        }
+        userHelper.close()
+    }
+
+    private fun removeUserFromFavorite(user: User){
+        val userHelper = UserHelper.getInstance(applicationContext)
+        userHelper.open()
+        val result = userHelper.deleteById(user.username).toLong()
+        if (result > 0) {
+            Toast.makeText(this,"User Removed from Favorite",Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Failed to Remove User from Favorite", Toast.LENGTH_SHORT).show()
+        }
+        userHelper.close()
+    }
     private fun showUserData(user: User){
         progressDialog = createProgressDialog()
         loading(true, progressDialog)
@@ -76,7 +130,7 @@ class DetailActivity : AppCompatActivity() {
         val userAvatar: ImageView = findViewById(R.id.user_avatar)
         val txtCompany: TextView = findViewById(R.id.txt_company)
         val txtLocation: TextView = findViewById(R.id.txt_location)
-
+        likeButton = findViewById(R.id.like_button)
         val client = AsyncHttpClient()
         client.addHeader("Authorization", "900c99ea20e62c5c3dde2f55b2af8e4796fab26c")
         client.addHeader("User-Agent", "request")
@@ -95,7 +149,10 @@ class DetailActivity : AppCompatActivity() {
                     user.repositoryLink = jsonObj.getString("repos_url")
                     user.followerLink = jsonObj.getString("followers_url")
                     user.followingLink = jsonObj.getString("following_url")
-
+                    if(isFavoriteUser(user.username)){
+                        user.isFavorite = true
+                        likeButton.isChecked = true
+                    }
                     supportActionBar?.title = user.username
                     Glide.with(this@DetailActivity).load(user.avatar).into(userAvatar)
                     txtUsername.setText(user.name)
@@ -143,5 +200,13 @@ class DetailActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.like_button->{
+                LikeButtonAction(user)
+            }
+        }
     }
 }

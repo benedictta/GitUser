@@ -111,12 +111,6 @@ class MainActivity : AppCompatActivity() {
                 showSelectedUser(data)
             }
         })
-
-        userAdapter.setOnLikeButtonClickCallback(object : UserAdapter.OnLikeButtonClickCallback{
-            override fun onLikeButtonClicked(data: User) {
-                LikeButtonAction(data)
-            }
-        })
     }
 
     private fun showSearchResult() {
@@ -129,58 +123,6 @@ class MainActivity : AppCompatActivity() {
                 showSelectedUser(data)
             }
         })
-        userAdapter.setOnLikeButtonClickCallback(object : UserAdapter.OnLikeButtonClickCallback{
-            override fun onLikeButtonClicked(data: User) {
-                LikeButtonAction(data)
-            }
-        })
-    }
-
-    private fun isFavoriteUser(username: String): Boolean{
-        val userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
-        val isFavorite = userHelper.checkIfExist(username)
-        userHelper.close()
-        return isFavorite
-    }
-
-    private fun LikeButtonAction(user: User){
-        val isChecked = user.isFavorite
-        if(isChecked){
-            removeUserFromFavorite(user)
-            user.isFavorite = false
-        }
-        else if(!isChecked){
-            addUserToFavorite(user)
-            user.isFavorite = true
-        }
-    }
-
-    private fun addUserToFavorite(user: User){
-        val userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
-        val values = ContentValues()
-        values.put(DatabaseContract.UserColumns.USERNAME, user.username)
-        values.put(DatabaseContract.UserColumns.AVATAR_URL, user.avatar)
-        val result = userHelper.insert(values)
-        if (result > 0) {
-            Toast.makeText(this,"User Added to Favorite",Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Failed to Add User to Favorite", Toast.LENGTH_SHORT).show()
-        }
-        userHelper.close()
-    }
-
-    private fun removeUserFromFavorite(user: User){
-        val userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
-        val result = userHelper.deleteById(user.username).toLong()
-        if (result > 0) {
-            Toast.makeText(this,"User Removed from Favorite",Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Failed to Remove User from Favorite", Toast.LENGTH_SHORT).show()
-        }
-        userHelper.close()
     }
 
     private fun getUsersFromJSON(){
@@ -203,9 +145,6 @@ class MainActivity : AppCompatActivity() {
                         val user = User()
                         user.avatar = jsonArr.getJSONObject(i).getString("avatar_url")
                         user.username = jsonArr.getJSONObject(i).getString("login")
-                        if(isFavoriteUser(user.username)){
-                            user.isFavorite = true
-                        }
                         userList.add(user)
                     }
                     progressBar.visibility = View.INVISIBLE
@@ -256,9 +195,6 @@ class MainActivity : AppCompatActivity() {
                         val user = User()
                         user.avatar = jsonArr.getJSONObject(i).getString("avatar_url")
                         user.username = jsonArr.getJSONObject(i).getString("login")
-                        if(isFavoriteUser(user.username)){
-                            user.isFavorite = true
-                        }
                         searchList.add(user)
                     }
                     progressBar.visibility = View.INVISIBLE

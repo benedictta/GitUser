@@ -10,15 +10,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.gituser.R
 import com.example.gituser.model.User
 
-class UserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adapter<UserAdapter.ListViewHolder>() {
+class LikedUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adapter<LikedUserAdapter.ListViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
+    private lateinit var onLikeButtonClickCallback: OnLikeButtonClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback
     }
 
+    fun setOnLikeButtonClickCallback(onLikeButtonClickCallback: OnLikeButtonClickCallback){
+        this.onLikeButtonClickCallback = onLikeButtonClickCallback
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ListViewHolder {
-        val view: View = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_list_user, viewGroup, false)
+        val view: View = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_list_liked_user, viewGroup, false)
         return ListViewHolder(view)
     }
 
@@ -30,6 +35,11 @@ class UserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adapter<
             .into(holder.imgPhoto)
         holder.txtUsername.text = user.username
         holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(listUser[holder.adapterPosition]) }
+        if(!user.isFavorite)
+            holder.likeButton.isChecked = false
+        else if(user.isFavorite)
+            holder.likeButton.isChecked = true
+        holder.likeButton.setOnClickListener { onLikeButtonClickCallback.onLikeButtonClicked(listUser[holder.adapterPosition])}
     }
 
     override fun getItemCount(): Int {
@@ -40,10 +50,15 @@ class UserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adapter<
 
         var txtUsername: TextView = itemView.findViewById(R.id.txt_user_name)
         var imgPhoto: ImageView = itemView.findViewById(R.id.img_item_photo)
+        var likeButton: CheckBox = itemView.findViewById(R.id.like_button)
     }
 
     interface OnItemClickCallback {
         fun onItemClicked(data: User)
+    }
+
+    interface OnLikeButtonClickCallback {
+        fun onLikeButtonClicked(data: User)
     }
 
 
