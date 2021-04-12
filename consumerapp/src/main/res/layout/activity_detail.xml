@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@color/bg_color"
+        android:background="@color/blue_200"
         android:minHeight="?actionBarSize"
         app:tabIndicatorColor="@color/white"
         app:tabIndicatorFullWidth="false"

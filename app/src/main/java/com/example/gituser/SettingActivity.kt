@@ -29,7 +29,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.turn_on_reminder_button->{
-                val repeatTime = "17:40"
+                val repeatTime = "09:00"
                 val repeatMessage = "Time to Back to the Applicaton"
                 if(!reminderReceiver.isReminderSet(this)){
                     reminderReceiver.setRepeatingReminder(this, ReminderReceiver.TYPE_REPEATING, repeatTime, repeatMessage)
