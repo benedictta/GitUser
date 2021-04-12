@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">GitUser</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search Username</string>
+    <string name="company">Company</string>
+    <string name="location">Location</string>
+    <string name="tab_text1">Repositories</string>
+    <string name="tab_text2">Following</string>
+    <string name="tab_text3">Followers</string>
+    <string name="repository_warning">This user does not ave any repository</string>
+    <string name="followers_warning">This user has no followers</string>
+    <string name="following_warning">This user hasn\'t followed anyone</string>
+    <string name="favorite_user">Favorite User</string>
+    <string name="settings">settings</string>
+</resources>

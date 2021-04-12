@@ -17,9 +17,10 @@ class LikedUserProvider : ContentProvider() {
         private const val USERNAME = 2
         private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
         private lateinit var userHelper: UserHelper
+
         init {
             sUriMatcher.addURI(AUTHORITY, TABLE_NAME, USER)
-            sUriMatcher.addURI(AUTHORITY, "$TABLE_NAME/#", USERNAME)
+            sUriMatcher.addURI(AUTHORITY, "$TABLE_NAME/*", USERNAME)
         }
     }
 
@@ -45,25 +46,27 @@ class LikedUserProvider : ContentProvider() {
             sUriMatcher.match(uri) -> userHelper.insert(contentValues)
             else -> 0
         }
+
         context?.contentResolver?.notifyChange(CONTENT_URI, null)
+
         return Uri.parse("$CONTENT_URI/$added")
     }
 
-    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
+
+    override fun update(uri: Uri, contentValues: ContentValues?, s: String?, strings: Array<String>?): Int {
+        val updated= 0
+        return updated
+    }
+
+    override fun delete(uri: Uri, s: String?, strings: Array<String>?): Int {
         val deleted: Int = when (USERNAME) {
             sUriMatcher.match(uri) -> userHelper.deleteById(uri.lastPathSegment.toString())
             else -> 0
         }
-        context?.contentResolver?.notifyChange(CONTENT_URI, null)
-        return deleted
-    }
 
-    override fun update(
-        uri: Uri,
-        values: ContentValues?,
-        selection: String?,
-        selectionArgs: Array<out String>?
-    ): Int {
-        TODO("Not yet implemented")
+       // val deleted = userHelper.deleteById(uri.lastPathSegment.toString())
+        context?.contentResolver?.notifyChange(CONTENT_URI, null)
+
+        return deleted
     }
 }

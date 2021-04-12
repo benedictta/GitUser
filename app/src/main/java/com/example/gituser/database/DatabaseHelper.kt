@@ -10,12 +10,12 @@ internal class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
     companion object {
         private const val DATABASE_NAME = "db_user"
         private const val DATABASE_VERSION = 1
-        private const val SQL_CREATE_TABLE_NOTE = "CREATE TABLE $TABLE_NAME" +
+        private const val SQL_CREATE_TABLE_LIKED_USER = "CREATE TABLE $TABLE_NAME" +
                 " (${DatabaseContract.UserColumns.USERNAME} VARCHAR(40) PRIMARY KEY NOT NULL," +
                 " ${DatabaseContract.UserColumns.AVATAR_URL} TEXT NOT NULL)"
     }
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(SQL_CREATE_TABLE_NOTE)
+        db.execSQL(SQL_CREATE_TABLE_LIKED_USER)
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")

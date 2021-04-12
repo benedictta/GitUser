@@ -1,8 +1,8 @@
-package com.example.gituser.database
+package com.example.consumerapp.helper
 
 import android.database.Cursor
-import android.provider.ContactsContract
-import com.example.gituser.model.User
+import com.example.consumerapp.database.DatabaseContract
+import com.example.consumerapp.model.User
 
 object MappingHelper {
 

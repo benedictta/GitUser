@@ -1,25 +1,24 @@
 package com.example.gituser
 
-import android.content.ContentValues
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gituser.adapter.LikedUserAdapter
-import com.example.gituser.database.DatabaseContract
 import com.example.gituser.database.DatabaseContract.UserColumns.Companion.CONTENT_URI
 import com.example.gituser.database.MappingHelper
 import com.example.gituser.database.UserHelper
 import com.example.gituser.model.User
 
 class LikedUserActivity : AppCompatActivity() {
-    private var listChanged = false
     private var likedUserList: ArrayList<User> = arrayListOf()
     private lateinit var rvUsers: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var uriWithID: Uri
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -54,11 +53,8 @@ class LikedUserActivity : AppCompatActivity() {
     }
 
     private fun getLikedUsers(): ArrayList<User>{
-        val userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
         val cursor = contentResolver.query(CONTENT_URI, null, null, null, null)
         val LikedUserList = MappingHelper.mapCursorToArrayList(cursor)
-        userHelper.close()
         return LikedUserList
     }
 
@@ -76,19 +72,16 @@ class LikedUserActivity : AppCompatActivity() {
             likedUserList = getLikedUsers()
             showRecyclerList()
         }
-        listChanged = true
     }
 
     private fun removeUserFromFavorite(user: User){
-        val userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
-        val result = userHelper.deleteById(user.username).toLong()
-        if (result > 0) {
+        uriWithID = Uri.parse(CONTENT_URI.toString() + "/" + user.username)
+        val cursor = contentResolver.delete(uriWithID,null,null)
+        if (cursor != 0) {
             Toast.makeText(this,"User Removed from Favorite", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Failed to Remove User from Favorite", Toast.LENGTH_SHORT).show()
         }
-        userHelper.close()
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -1,9 +1,9 @@
-package com.example.gituser
+package com.example.consumerapp
 
 import android.content.ContentValues
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceActivity
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -11,21 +11,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
-import com.example.gituser.adapter.SectionsPagerAdapter
-import com.example.gituser.database.DatabaseContract
-import com.example.gituser.database.DatabaseContract.UserColumns.Companion.CONTENT_URI
-import com.example.gituser.database.UserHelper
-import com.example.gituser.model.User
+import com.example.consumerapp.adapter.SectionsPagerAdapter
+import com.example.consumerapp.database.DatabaseContract
+import com.example.consumerapp.database.DatabaseContract.UserColumns.Companion.CONTENT_URI
+import com.example.consumerapp.model.User
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 class DetailActivity : AppCompatActivity(), View.OnClickListener {
@@ -80,11 +79,8 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun isFavoriteUser(username: String): Boolean{
-        val userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
-        val isFavorite = userHelper.checkIfExist(username)
-        return isFavorite
+    private fun isFavoriteUser(user: User): Boolean{
+        return user.isFavorite
     }
 
     private fun LikeButtonAction(user: User){
@@ -120,6 +116,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
             Toast.makeText(this, "Failed to Remove User from Favorite", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun showUserData(user: User){
         progressDialog = createProgressDialog()
         loading(true, progressDialog)
@@ -146,7 +143,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                     user.repositoryLink = jsonObj.getString("repos_url")
                     user.followerLink = jsonObj.getString("followers_url")
                     user.followingLink = jsonObj.getString("following_url")
-                    if(isFavoriteUser(user.username)){
+                    if(isFavoriteUser(user)){
                         user.isFavorite = true
                         likeButton.isChecked = true
                     }
@@ -172,7 +169,6 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                     e.printStackTrace()
                 }
             }
-
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?, error: Throwable?) {
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
