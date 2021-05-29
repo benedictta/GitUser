@@ -1,7 +1,6 @@
 package com.example.gituser
 
 import android.app.SearchManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,9 +15,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gituser.adapter.UserAdapter
-import com.example.gituser.database.DatabaseContract
-import com.example.gituser.database.MappingHelper
-import com.example.gituser.database.UserHelper
 import com.example.gituser.model.User
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
@@ -60,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 searchUserFromJSON(query)
-                searchView.clearFocus();
+                searchView.clearFocus()
                 return true
             }
 
@@ -71,14 +67,14 @@ class MainActivity : AppCompatActivity() {
         })
         searchMenuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener{
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                likedUserMenuItem.setVisible(false)
-                settingMenuItem.setVisible(false)
+                likedUserMenuItem.isVisible = false
+                settingMenuItem.isVisible = false
                 return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                likedUserMenuItem.setVisible(true)
-                settingMenuItem.setVisible(true)
+                likedUserMenuItem.isVisible = true
+                settingMenuItem.isVisible = true
                 showRecyclerList()
                 return true
             }
@@ -141,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 val result = responseBody?.let { String(it) }
                 try {
                     val jsonArr = JSONArray(result)
-                    for (i in 0..jsonArr.length() - 1) {
+                    for (i in 0 until jsonArr.length()) {
                         val user = User()
                         user.avatar = jsonArr.getJSONObject(i).getString("avatar_url")
                         user.username = jsonArr.getJSONObject(i).getString("login")
@@ -191,7 +187,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val jsonObj = JSONObject(result)
                     val jsonArr = jsonObj.getJSONArray("items")
-                    for (i in 0..jsonArr.length() - 1) {
+                    for (i in 0 until jsonArr.length()) {
                         val user = User()
                         user.avatar = jsonArr.getJSONObject(i).getString("avatar_url")
                         user.username = jsonArr.getJSONObject(i).getString("login")
